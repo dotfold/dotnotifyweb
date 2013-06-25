@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" >
+	<head>
+		<meta charset="utf-8">
+		<title>dotnotify</title>
+		<meta name="viewport" content="width=device-width">
+		<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+		
+		<!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    	<link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+
+
+	</head>
+
+	<body ng-app="dotnotify">
+
+		<div class="container-fluid">
+
+			<div class="row-fluid">
+				<div class="span4">
+					<p>notifyweb<p>
+				</div>
+			</div>
+
+			<div class="row-fluid">
+				<!-- Side menu control -->
+				<div class="span2 pull-left">MENU</div>
+				<!-- Main content view -->
+				<div class="span10 pull-right" ng-view></div>
+			</div>
+
+			<div class="row-fluid">
+				<div class="footer">
+					<p>&copy;2013 dotfold</p>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- scripts --><% scripts.forEach( function ( file ) { %>
+    	<script type="text/javascript" src="<%= file %>"></script><% }); %>
+
+	</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "dotnotifyweb",
+  "version": "0.0.0",
+  "main": "src/main/index.j",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "angular": "~1.0.7",
+    "compass-twitter-bootstrap": "~2.3.1"
+  }
+}
