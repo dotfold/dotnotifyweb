@@ -1,7 +1,6 @@
 {
   "name": "dotnotifyweb",
   "version": "0.0.0",
-  "main": "src/main/index.j",
   "ignore": [
     "**/.*",
     "node_modules"
