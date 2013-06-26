@@ -37,7 +37,10 @@ module.exports = function(grunt) {
             },
 
             src: {
-                files: '<%= app_files.js %>',
+                files: [
+                    '<%= app_files.js %>',
+                    '<%= app_files.atpl %>'
+                ],
                 options: {
                     nospawn: true
                 }
@@ -51,13 +54,14 @@ module.exports = function(grunt) {
         },
 
         clean: {
-            sass: [
-                '.sass-cache'
+            precompile: [
+                '.sass-cache',
+                '<%= precompile_dir %>'
             ],
             all: [
                 '.sass-cache',
                 '<%= build_dir %>', 
-                '<%= compile_dir %>'
+                '<%= precompile_dir %>'
             ]
         },
 
@@ -85,7 +89,7 @@ module.exports = function(grunt) {
             build: {
                 options: {
                     sassDir: 'src/main/style',
-                    cssDir: '<%= build_dir %>/assets/css',
+                    cssDir: '<%= precompile_dir %>/assets/css',
                     // imagesDir: '<%= config.app %>/img',
                     javascriptsDir: 'src/main/js',
                     // fontsDir: '/fonts',
@@ -100,9 +104,9 @@ module.exports = function(grunt) {
                 files: [
                     { 
                         src: [ '**' ],
-                        dest: '<%= build_dir %>/css/',
-                        cwd: '.',
-                        expand: false
+                        dest: '<%= build_dir %>/',
+                        cwd: 'build/',
+                        expand: true
                     }
                 ]   
             },
@@ -110,11 +114,10 @@ module.exports = function(grunt) {
             appjs: {
                 files: [
                     {
-                        expand: true,
-                        cwd: 'src/main/',
-                        // flatten: true,
-                        src: [ '<%= app_files.js %>' ],
-                        dest: '<%= build_dir %>/js'
+                        src: [ '**/*.js' ],
+                        dest: '<%= build_dir %>/js',
+                        cwd: 'src/main/js/',
+                        expand: true
                     }
                 ]
             },
@@ -122,9 +125,9 @@ module.exports = function(grunt) {
             vendorjs: {
                 files: [
                     {
-                        src: [ '<%= vendor_files.js %>' ],
-                        dest: '<%= build_dir %>/',
-                        cwd: '.',
+                        src: [ '**/*.js' ],
+                        dest: '<%= build_dir %>/js/vendor',
+                        cwd: 'src/vendor/angular/',
                         expand: true
                     }
                 ]
@@ -141,7 +144,7 @@ module.exports = function(grunt) {
             build: {
                 dir: '<%= build_dir %>',
                 src: [
-                    '<%= vendor_files.js %>',
+                    // '<%= vendor_files.js %>',
                     '<%= build_dir %>/js/**/*.js',
                     // '<%= html2js.common.dest %>',
                     // '<%= html2js.app.dest %>',
@@ -193,7 +196,7 @@ module.exports = function(grunt) {
      * compilation.
      */
     grunt.registerMultiTask('index', 'Process index.html template', function () {
-        var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('compile_dir')+')\/', 'g' );
+        var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('precompile_dir')+')\/', 'g' );
         var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
             grunt.log.write(file + '\n');
             return file.replace( dirRE, '' );
@@ -202,7 +205,7 @@ module.exports = function(grunt) {
             return file.replace( dirRE, '' );
         });
         // grunt.log.write(jsFiles);
-        grunt.file.copy('src/index.html', 'build' + '/index.html', { 
+        grunt.file.copy('src/index.html', 'bin' + '/index.html', { 
             process: function ( contents, path ) {
                 return grunt.template.process( contents, {
                     data: {
@@ -213,6 +216,10 @@ module.exports = function(grunt) {
                 });
             }
         });
+    });
+
+    grunt.registerTask('precompile_dir', function() {
+        grunt.file.mkdir('bin') ;
     });
 
     //
@@ -254,13 +261,15 @@ module.exports = function(grunt) {
 
     });
 
+    grunt.registerTask('default', ['build']);
 	grunt.registerTask('build', [
 		'clean',
 		'jshint',
 		// 'karma',
+        'precompile_dir',
 		'compass:build',
-        'clean:sass',
-        // 'copy:assets',
+        'clean:precompile',
+        'copy:assets',
         'copy:appjs',
         'copy:vendorjs',
         'index:build',
