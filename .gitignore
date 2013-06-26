@@ -4,6 +4,7 @@ src/main/vendor
 
 # Build Items
 bin
+build
 .tmp
 .sass-cache
 
